@@ -1,0 +1,19 @@
+<p>
+    login works!
+</p>
+<form (ngSubmit)="login(username.value, password.value)" #loginForm="ngForm">
+    <md-card>        
+        <md-card-subtitle class="login_error" *ngIf="authentication_error">{{authentication_error}}</md-card-subtitle>
+        <md-card-content>
+            <p>
+                <md-input class="login_input" placeholder="Username" ngControl="username" #username="ngForm" required></md-input>
+            </p>
+            <p>
+                <md-input class="login_input" type="password" placeholder="Password" ngControl="password" #password="ngForm" required></md-input>
+            </p>
+            <md-card-actions align="middle">
+                <button md-raised-button type="submit" [disabled]="!loginForm.valid">Submit</button>
+            </md-card-actions>
+        </md-card-content>
+    </md-card>
+</form>

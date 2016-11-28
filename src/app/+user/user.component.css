@@ -1,0 +1,14 @@
+.flex {
+    flex: 1;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}

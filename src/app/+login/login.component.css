@@ -1,0 +1,14 @@
+md-card{
+    width: 40%;
+    position: absolute;
+    top: 40%;
+    left: 30%;
+}
+
+.login_input {
+    width: 100%;
+}
+
+.login_error{
+    color: darkred;
+}

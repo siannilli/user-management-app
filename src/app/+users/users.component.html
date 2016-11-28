@@ -1,0 +1,11 @@
+<span *ngIf="apiErrorText">{{apiErrorText}}</span>
+
+<md-nav-list>
+    <h3 md-subheader>Active users</h3>
+    <a md-list-item *ngFor="let user of users" (click)="onSelect(user)">
+        <md-icon md-list-avatar>face</md-icon>
+        <h4 md-line>{{user.username}}</h4>
+        <p md-line class="user_email"> {{user.email}} </p>
+    </a>
+    <md-divider></md-divider>
+</md-nav-list>
