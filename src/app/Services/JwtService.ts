@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { Subscription,   } from 'rxjs';
 import { IUser } from '../shared/IUser';
-import { IJWTService, JWTServiceBase } from '../IServices/IJWTService';
+import { IJWTService, JWTServiceBase, JWT_SERVICE_URL_TOKEN } from '../IServices/IJWTService';
 import { environment } from '..';
 
 @Injectable()
@@ -10,7 +10,9 @@ export class JwtService implements IJWTService {
   
   private TOKEN_NAME:string = 'authentication_token';
 
-  constructor(private http:Http, private AUTHENTICATE_URL: string = 'http://localhost:3000/users/authenticate' ) {  
+  constructor(
+      private http:Http, 
+      @Inject(JWT_SERVICE_URL_TOKEN) private AUTHENTICATE_URL: string = 'http://localhost:3000/users/authenticate' ) {  
   
   }
        

@@ -1,7 +1,9 @@
 import { OpaqueToken } from '@angular/core';
 import { IUser } from '../shared/IUser';
 import { IResultsetView } from '../shared/IResultsetView';
-export let USER_SERVICE_TOKEN = new OpaqueToken('jwt.service.token');
+
+export let USER_SERVICE_TOKEN = new OpaqueToken('user.service');
+export let USER_SERVICE_URL_TOKEN = new OpaqueToken('user.service.url');
 
 export interface IUserService {
 

@@ -11,14 +11,15 @@ import { UserComponent } from './+user/user.component';
 import { UsersComponent } from './+users/users.component';
 import { LoginComponent } from './+login/login.component';
 
-import { JWT_SERVICE_TOKEN, IJWTService } from './IServices/IJWTService';
-import { USER_SERVICE_TOKEN, IUserService } from './IServices/IUserService';
+import { JWT_SERVICE_TOKEN, JWT_SERVICE_URL_TOKEN, IJWTService } from './IServices/IJWTService';
+import { USER_SERVICE_TOKEN, USER_SERVICE_URL_TOKEN, IUserService } from './IServices/IUserService';
 
-import { JwtServiceLocal } from './Services/InMemoryJWTService';
+import { environment } from '.';
+import { UserService } from './Services/UserService';
+import { JwtService } from './Services/JwtService';
+
+import { InMemoryJwtService } from './Services/InMemoryJWTService';
 import { InMemoryUserService } from './Services/InMemoryUserService';
-
-let userService:IUserService = new InMemoryUserService();
-let jwtService:IJWTService = new JwtServiceLocal(userService);
 
 @NgModule({
   declarations: [
@@ -38,8 +39,10 @@ let jwtService:IJWTService = new JwtServiceLocal(userService);
     ])
   ],
   providers: [ 
-      { provide: JWT_SERVICE_TOKEN , useValue : jwtService},
-      { provide: USER_SERVICE_TOKEN , useValue : userService}
+      { provide: JWT_SERVICE_TOKEN , useClass : environment.production ? JwtService : InMemoryJwtService },
+      { provide: USER_SERVICE_TOKEN , useClass : environment.production ? UserService : InMemoryUserService },
+      { provide: JWT_SERVICE_URL_TOKEN, useValue: environment.authUrl || ''},
+      { provide: USER_SERVICE_URL_TOKEN, useValue: environment.userServiceUrl || ''}
     ],
   bootstrap: [AdminAppComponent]
 })

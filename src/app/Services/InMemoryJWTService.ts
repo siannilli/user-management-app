@@ -6,7 +6,7 @@ import { IJWTService } from '../IServices/IJWTService';
 import { UserServiceBase, USER_SERVICE_TOKEN } from '../IServices/IUserService';
 
 @Injectable()
-export class JwtServiceLocal implements IJWTService {
+export class InMemoryJwtService implements IJWTService {
 
   private TOKEN_NAME:string = 'authentication_token';
 

@@ -1,6 +1,7 @@
 import { OpaqueToken } from '@angular/core';
 
-export let JWT_SERVICE_TOKEN = new OpaqueToken('jwt.service.token');
+export let JWT_SERVICE_TOKEN = new OpaqueToken('jwt.service');
+export let JWT_SERVICE_URL_TOKEN = new OpaqueToken('jwt.service.url');
 
 export interface IJWTService {
 

@@ -6,13 +6,14 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import { JWT_SERVICE_TOKEN, JWTServiceBase } from '../IServices/IJWTService';
 import { IResultsetView } from '../shared/IResultsetView';
+import { IUserService, USER_SERVICE_URL_TOKEN } from '../IServices/IUserService';
 
 @Injectable()
-export class UserService {
+export class UserService implements IUserService {
 
     constructor(
         private http: Http, 
-        private USER_SERVICE_URL: string = 'http://localhost:3000/users',
+        @Inject(USER_SERVICE_URL_TOKEN) private USER_SERVICE_URL:string = 'http://localhost:3000/users',
         @Inject(JWT_SERVICE_TOKEN) private jwtService: JWTServiceBase) {                
 
     }

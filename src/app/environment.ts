@@ -4,5 +4,7 @@
 
 export const environment = {
   production: false,
-  debugMode: false
+  debugMode: true, 
+  authUrl : "http://localhost:3000/api/users/authenticate",
+  userServiceUrl: "http://localhost:3000/api/users"
 };
