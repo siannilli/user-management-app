@@ -1,12 +1,13 @@
-import { bootstrap } from '@angular/platform-browser-dynamic';
+import './polyfills.ts';
+
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { enableProdMode } from '@angular/core';
-import { AdminAppComponent, environment } from './app/';
-import { UserService } from './app/user.service';
-import { JwtService } from './app/jwt.service';
+import { environment } from './app';
+import {  AppModule } from './app/app.module';
 
 if (environment.production) {
   enableProdMode();
 }
 
-bootstrap(AdminAppComponent, [UserService, JwtService]);
+platformBrowserDynamic().bootstrapModule(AppModule);
 

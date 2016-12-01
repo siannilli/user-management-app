@@ -1,9 +1,11 @@
-export class AdminPage {
+import { browser, element, by } from 'protractor';
+
+export class UserManagementAppMigrationPage {
   navigateTo() {
     return browser.get('/');
   }
 
   getParagraphText() {
-    return element(by.css('admin-app h1')).getText();
+    return element(by.css('app-root h1')).getText();
   }
 }

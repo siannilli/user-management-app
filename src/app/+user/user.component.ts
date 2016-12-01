@@ -1,94 +1,112 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { FORM_DIRECTIVES } from '@angular/common';
-import { MD_INPUT_DIRECTIVES } from '@angular2-material/input';
-import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
-import { MD_LIST_DIRECTIVES } from '@angular2-material/list';
-import { MdCheckbox } from '@angular2-material/checkbox';
-
-import { Router, RouteSegment, ROUTER_DIRECTIVES } from '@angular/router';
+import { Inject, Component, OnInit, Input } from '@angular/core';
+import { Router, ActivatedRoute, Params } from '@angular/router';
+import { Location } from '@angular/common';
 import { IUser } from '../shared/IUser';
 import { User } from '../shared/User';
-import { UserService } from '../user.service';
-import { JwtService } from '../jwt.service';
+
+import { UserServiceBase, USER_SERVICE_TOKEN } from '../IServices/IUserService';
+import { JWTServiceBase, JWT_SERVICE_TOKEN } from '../IServices/IJWTService';
+
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/switchMap';
+import { environment } from '../';
 
 @Component({
-    moduleId: module.id,
     selector: 'app-user',
     templateUrl: 'user.component.html',
     styleUrls: ['user.component.css'],
-    directives: [
-        ROUTER_DIRECTIVES, FORM_DIRECTIVES, MD_INPUT_DIRECTIVES, MD_CARD_DIRECTIVES,
-        MD_LIST_DIRECTIVES, MdCheckbox
-    ]
 })
+
 export class UserComponent implements OnInit {
 
     @Input()
     userId: string;
 
-    user: IUser = new User(undefined, undefined);
+    user: IUser = new User();
     availableRoles: string[] = [];
     availableApps: string[] = [];
 
     apiErrorText: string;
 
-    constructor(private routeSegment: RouteSegment,
-        private userService: UserService,
-        private jwtService: JwtService,
+    debugMode:boolean = environment.debugMode;
+
+    constructor(
+        private activeRoute: ActivatedRoute,
+        private location: Location,
+        @Inject(USER_SERVICE_TOKEN) private userService: UserServiceBase,
+        @Inject(JWT_SERVICE_TOKEN) private jwtService: JWTServiceBase,
         private router: Router
     ) { }
 
     ngOnInit() {
-        this.userId = this.routeSegment.getParam('name');
+
+        if (!this.jwtService.is_authenticated) // jwt token not exists, navigate to login view 
+            this.router.navigate(['/login']);
+
+        this.userId = this.activeRoute.snapshot.params['name'];
         this.apiErrorText = '';
-        
-        this.jwtService.authenticate();
+
+        let self = this;
+
         this.userService.getUser(this.userId)
-            .subscribe(user => {
-                this.user = user;
+            .then(user => {
+                self.user = user;
                 console.log(`User ${this.userId} loaded`);
-            }, error => this.apiErrorText = error._body);
+            }, error => self.apiErrorText = error._body);
 
         this.userService.getAvailableApplications()
-            .subscribe( value => this.availableApps = value, 
+            .then(value => self.availableApps = value,
             error => this.apiErrorText += `\n${error._body}`);
-            
+
         this.userService.getAvailableRoles()
-            .subscribe( value => this.availableRoles = value,             
-             error => this.apiErrorText += `\n${error._body}`); 
+            .then(value => self.availableRoles = value,
+            error => this.apiErrorText += `\n${error._body}`);
     }
-    
+
     enableAllApplications() {
         this.user.applications = [];        
         this.availableApps.forEach( app => this.user.applications.push(app));
     }
-    
+
     enableAllRoles() {
         this.user.roles = [];
-        this.availableRoles.forEach(role => this.user.roles.push(role));        
+        this.availableRoles.forEach(role => this.user.roles.push(role) );
     }
 
-    toggleApplication(app:string) {
+    toggleApplication(app: string) {
         this.toggleArrayItem(this.user.applications, app);
     }
-    
-    toggleRole(role:string) {
+
+    toggleRole(role: string) {
         this.toggleArrayItem(this.user.roles, role);
     }
-    
-    private toggleArrayItem(arr:string[], item:string){
+
+    isInRole(role: string): boolean {
+        return this.user.roles.indexOf(role) >  -1;
+    }
+
+    isInApplication(app: string): boolean {
+        return this.user.applications.indexOf(app) > -1;
+    }
+
+    private toggleArrayItem(arr: string[], item: string) {
+        console.debug(`Toggling value ${item} for array ${arr.toString()}`);
+
         if (arr.indexOf(item) > -1)
             arr.splice(arr.indexOf(item), 1);
         else
             arr.push(item);
-        
+
     }
 
-    update(){        
+    update() {
+        console.debug('Updating user...' + this.user);
         this.userService.updateUser(this.userId, this.user)
-            .subscribe((val: IUser) => this.router.navigate( ['/users']), 
-                (err) => console.error(err));            
-            
+            .then((val: IUser) => {
+                console.debug('user update succeed');
+                this.router.navigate( ['/']);
+            })
+            .catch(err => console.error(err));
+
     }
 }

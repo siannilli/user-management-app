@@ -1,0 +1,16 @@
+[ {
+        "_id" : "stefano",
+        "username": "stefano",
+        "password": "stefano",
+        "applications": [],
+        "roles": ["admin"],
+        "email": "stefano.iannilli@gmail.com" 
+    }, 
+    {
+        "_id" : "stefano1",
+        "username": "stefano1",
+        "password": "stefano1",
+        "applications": [],
+        "roles": ["admin"],
+        "email": "stefano.iannilli@gmail.com" 
+    }]

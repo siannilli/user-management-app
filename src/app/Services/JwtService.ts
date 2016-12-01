@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { Subscription,   } from 'rxjs';
-import { Router } from '@angular/router';
+import { IUser } from '../shared/IUser';
+import { IJWTService, JWTServiceBase } from '../IServices/IJWTService';
+import { environment } from '..';
 
 @Injectable()
-export class JwtService {
+export class JwtService implements IJWTService {
   
-  AUTHENTICATE_URL = 'http://localhost:3000/users/authenticate';
   private TOKEN_NAME:string = 'authentication_token';
 
-  constructor(private http:Http, private router:Router) {  
+  constructor(private http:Http, private AUTHENTICATE_URL: string = 'http://localhost:3000/users/authenticate' ) {  
   
   }
        
@@ -18,29 +19,23 @@ export class JwtService {
   }
    
   
-  login(username:string, password:string) {     
+  login(username:string, password:string): Promise<void> {     
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers });
       
     return this.http.post(this.AUTHENTICATE_URL, 
             JSON.stringify({ "username": username, "password": password}), 
-            options)        
-        .map((res:Response) => localStorage.setItem(this.TOKEN_NAME, res.json()));    
+            options)
+            .map(res => localStorage.setItem(this.TOKEN_NAME, res.text()))                
+            .toPromise();
   }
   
-  logout(){
+  logout(): void{
       localStorage.removeItem(this.TOKEN_NAME);
-      this.router.navigate(['/login']);
   }
   
   public get is_authenticated() : boolean {
       return (this.authentication_token !== undefined); // TODO: check decoded token for token expiration      
-  }
-  
-
-  authenticate(){
-      if (!this.is_authenticated)
-        this.router.navigate(['/login']);  
   }
 
 }

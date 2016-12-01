@@ -1,38 +1,38 @@
 <form #userForm="ngForm">
     <md-card>
-        <md-cart-title>{{user.username}}</md-cart-title>
+        <md-card-title>{{user.username}}</md-card-title>
         <md-card-subtitle class="error" *ngIf="error">{{error}}</md-card-subtitle>
         <md-card-content>
             <p>
-                <md-input type="email" class="login_input" placeholder="Email" ngControl="email" [(ngModel)]="user.email"></md-input>
+                <md-input name="email" type="email" class="login_input" placeholder="Email" ngControl="email" [(ngModel)]="user.email"></md-input>
             </p>
             <md-divider></md-divider>
 
             <div class="row">
                 <div class="column">
                     <h4>Applications</h4>
-                    <span><a md-button (click)="enableAllApplications()">All</a>&nbsp;&nbsp;<a md-button (click)="user.applications = []">None</a></span>
+                    <span><button md-button color="primary" (click)="enableAllApplications()">All</button>&nbsp;&nbsp;<button md-button color="primary" (click)="user.applications = []">None</button></span>
                     <md-list>
                         <md-list-item *ngFor="let app of availableApps">
-                            <md-checkbox [checked]="user.applications.indexOf(app) > -1" (click)="toggleApplication(app);">{{app}}</md-checkbox>
+                            <md-checkbox [checked]="isInApplication(app)" (change)="toggleApplication(app);">{{app}}</md-checkbox>
                         </md-list-item>
                     </md-list>
-                    <h4>Debug: {{user.applications | json }}</h4>
+                    <h4 *ngIf="debugMode">Debug: {{user.applications | json }}</h4>
                 </div>
                 <div class="column">
                     <h4>Roles</h4>
-                    <span><a md-button (click)="enableAllRoles()">All</a>&nbsp;&nbsp;<a md-button (click)="user.roles = []">None</a></span>
+                    <span><button md-button color="primary" (click)="enableAllRoles()">All</button>&nbsp;&nbsp;<button md-button color="primary" (click)="user.roles = []">None</button></span>
                     <md-list>
                         <md-list-item *ngFor="let role of availableRoles">
-                            <md-checkbox [checked]="user.roles.indexOf(role) > -1" (click)="toggleRole(role)">{{role}}</md-checkbox>
+                            <md-checkbox [checked]="isInRole(role)" (change)="toggleRole(role)" name="role" >{{role}}</md-checkbox>
                         </md-list-item>
                     </md-list>
-                    <h4>Debug: {{user.roles | json }}</h4>
+                    <h4 *ngIf="debugMode">Debug: {{user.roles | json }}</h4>
                 </div>
             </div>
             <md-divider></md-divider>
             <md-card-actions align="middle">
-                <button md-raised-button type="submit" (click)="update()" >Submit</button>&nbsp;or&nbsp;
+                <button md-raised-button type="button" (click)="update()" >Submit</button>&nbsp;or&nbsp;
                 <a [routerLink]="['/users']">Cancel</a>
             </md-card-actions>
             <md-divider></md-divider>

@@ -1,45 +1,43 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { Router, ROUTER_PROVIDERS } from '@angular/router';
-import { MD_LIST_DIRECTIVES } from '@angular2-material/list';
-import { MdIcon, MdIconRegistry } from '@angular2-material/icon';
+import { Router } from '@angular/router';
 import { IUser } from '../shared/IUser';
-import { UserService } from '../user.service';
-import { JwtService } from '../jwt.service';
+import { UserServiceBase, USER_SERVICE_TOKEN } from '../IServices/IUserService';
+import { JWTServiceBase, JWT_SERVICE_TOKEN } from '../IServices/IJWTService';
 import { Observable } from 'rxjs';
 
 
 @Component({
-  moduleId: module.id,
-  selector: 'app-users',
-  templateUrl: 'users.component.html',
-  styleUrls: ['users.component.css'],
-  directives: [MD_LIST_DIRECTIVES, MdIcon]
-  
+    selector: 'app-users',
+    templateUrl: 'users.component.html',
+    styleUrls: ['users.component.css'],
+
 })
 
 export class UsersComponent implements OnInit {
 
-  users:IUser[];
-  apiErrorText:string;
-  
-  constructor(private userService:UserService, private jwtService:JwtService, private router:Router) {}
+    users: IUser[];
+    apiErrorText: string;
 
-  onSelect(user:IUser){      
-      console.log(user.username);
-      this.router.navigate(['/user', user._id]);
-  }
+    constructor(@Inject(USER_SERVICE_TOKEN) private userService: UserServiceBase, @Inject(JWT_SERVICE_TOKEN) private jwtService: JWTServiceBase, private router: Router) { }
 
-  ngOnInit() {
-      
-      this.jwtService.authenticate();
-      
-      this.apiErrorText = undefined;
-      this.userService.getAllUsers()
-          .subscribe(
-              users => this.users = users.view,
-              error => this.apiErrorText = error._body
-          );
-      
-  }
+    onSelect(user: IUser) {
+        console.log(user.username);
+        this.router.navigate(['/user', user._id]);
+    }
+
+    ngOnInit() {
+        if (!this.jwtService.is_authenticated) // jwt token not exists, navigate to login view 
+        {
+            console.log('Not authenticated. Redirecting to login.');
+            this.router.navigate(['/login']);
+        }
+
+        this.apiErrorText = undefined;
+        this.userService.getAllUsers()
+            .then(
+            users => this.users = users.view,
+            error => this.apiErrorText = error._body
+            );
+    }
 
 }
