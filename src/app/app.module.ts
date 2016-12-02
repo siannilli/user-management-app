@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, OpaqueToken } from '@angular/core';
+import { NgModule, OpaqueToken, enableProdMode } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
@@ -21,6 +21,24 @@ import { JwtService } from './Services/JwtService';
 import { InMemoryJwtService } from './Services/InMemoryJWTService';
 import { InMemoryUserService } from './Services/InMemoryUserService';
 
+// configure service providers according current environment
+let providers: any[] = []; // array of providers 
+
+if (!environment.offline){
+      providers.push({ provide: JWT_SERVICE_TOKEN , useClass : JwtService });
+      providers.push({ provide: USER_SERVICE_TOKEN , useClass : UserService });
+      
+      // inject service configuration values as providers  
+      providers.push({ provide: JWT_SERVICE_URL_TOKEN, useValue: environment.authServiceUrl });
+      providers.push({ provide: USER_SERVICE_URL_TOKEN, useValue: environment.userServiceUrl });
+}
+else{
+      // dev mode
+      providers.push({ provide: JWT_SERVICE_TOKEN , useClass : InMemoryJwtService });
+      providers.push({ provide: USER_SERVICE_TOKEN , useClass : InMemoryUserService });
+}
+
+
 @NgModule({
   declarations: [
     AdminAppComponent,
@@ -38,13 +56,17 @@ import { InMemoryUserService } from './Services/InMemoryUserService';
       {path: '', component: UsersComponent}
     ])
   ],
-  providers: [ 
-      { provide: JWT_SERVICE_TOKEN , useClass : environment.production ? JwtService : InMemoryJwtService },
-      { provide: USER_SERVICE_TOKEN , useClass : environment.production ? UserService : InMemoryUserService },
-      { provide: JWT_SERVICE_URL_TOKEN, useValue: environment.authUrl || ''},
-      { provide: USER_SERVICE_URL_TOKEN, useValue: environment.userServiceUrl || ''}
-    ],
+  providers: providers,
   bootstrap: [AdminAppComponent]
 })
 
-export class AppModule { }
+export class AppModule { 
+  /**
+   *
+   */
+  constructor() {
+    if (environment.debugMode)
+      console.warn(environment);
+  }
+
+}

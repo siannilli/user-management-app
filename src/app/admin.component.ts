@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, enableProdMode } from '@angular/core';
 
 import { LoginComponent } from './+login';
 import { Router, RouterModule } from '@angular/router';
@@ -6,6 +6,7 @@ import { HttpModule } from '@angular/http';
 import { UsersComponent } from './+users';
 import { UserComponent } from './+user';
 import { JWTServiceBase, JWT_SERVICE_TOKEN } from './IServices/IJWTService';
+import { environment } from '.';
 
 @Component({
   selector: 'admin-app',
@@ -16,8 +17,10 @@ import { JWTServiceBase, JWT_SERVICE_TOKEN } from './IServices/IJWTService';
 export class AdminAppComponent implements OnInit {
   title = 'User management application';
 
-  constructor(@Inject(JWT_SERVICE_TOKEN) private jwtService: JWTServiceBase, private router: Router) {
+  constructor( @Inject(JWT_SERVICE_TOKEN) private jwtService: JWTServiceBase, private router: Router) {
 
+    if (!environment.production)
+      this.title = this.title.concat(' (development mode)');
   }
 
   logout() {
@@ -29,8 +32,8 @@ export class AdminAppComponent implements OnInit {
   ngOnInit() {
     if (!this.jwtService.is_authenticated) // jwt token not exists, navigate to login view 
     {
-      console.warn('Not authetnicated. Redirecting to login'); 
-      this.router.navigate(['/login']); 
+      console.warn('Not authetnicated. Redirecting to login');
+      this.router.navigate(['/login']);
     }
 
   }

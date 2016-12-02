@@ -15,7 +15,7 @@ export interface IJWTService {
 export abstract class JWTServiceBase {
     authentication_token:string = null;
     get is_authenticated():boolean {
-        return this.authentication_token !== null; 
+        return this.authentication_token !== null && this.authentication_token !== undefined; 
     }
     logout():void {};
 

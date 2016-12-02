@@ -28,7 +28,7 @@ export class JwtService implements IJWTService {
     return this.http.post(this.AUTHENTICATE_URL, 
             JSON.stringify({ "username": username, "password": password}), 
             options)
-            .map(res => localStorage.setItem(this.TOKEN_NAME, res.text()))                
+            .map(res => localStorage.setItem(this.TOKEN_NAME, res.json()))                
             .toPromise();
   }
   

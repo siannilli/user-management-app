@@ -15,6 +15,7 @@ export interface IUserService {
     addUser(user: IUser): Promise<IUser>;
 }
 
+// Abstract class required to accept injected service by Angular injection 
 export abstract class UserServiceBase implements IUserService {    
 
     getAllUsers (skip?: number, limit: number = 10): Promise<IResultsetView<IUser>> {

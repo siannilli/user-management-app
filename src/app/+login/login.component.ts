@@ -1,6 +1,6 @@
 import { Inject, Component, OnInit } from '@angular/core';
 
-import { JWT_SERVICE_TOKEN, JWTServiceBase } from '../IServices/IJWTService';
+import { JWT_SERVICE_TOKEN, JWTServiceBase, IJWTService } from '../IServices/IJWTService';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 

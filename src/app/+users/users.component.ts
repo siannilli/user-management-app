@@ -17,6 +17,7 @@ export class UsersComponent implements OnInit {
 
     users: IUser[];
     apiErrorText: string;
+    self = this;
 
     constructor(@Inject(USER_SERVICE_TOKEN) private userService: UserServiceBase, @Inject(JWT_SERVICE_TOKEN) private jwtService: JWTServiceBase, private router: Router) { }
 
@@ -33,11 +34,15 @@ export class UsersComponent implements OnInit {
         }
 
         this.apiErrorText = undefined;
+
+        console.debug('Loading list of users');
         this.userService.getAllUsers()
-            .then(
-            users => this.users = users.view,
-            error => this.apiErrorText = error._body
-            );
+            .then(users => {
+                console.debug(`Found ${users.found} users`);
+                this.users = users.view;
+            })
+            .catch(error => this.apiErrorText = error._body || error);
+            
     }
 
 }
