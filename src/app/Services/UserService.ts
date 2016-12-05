@@ -20,6 +20,8 @@ class ChangePasswordCommand extends ResetPasswordCommand{
 @Injectable()
 export class UserService implements UserServiceBase {
 
+
+
     constructor(
         private http: Http, 
         @Inject(USER_SERVICE_URL_TOKEN) private USER_SERVICE_URL:string = 'http://localhost:3000/users',
@@ -73,11 +75,20 @@ export class UserService implements UserServiceBase {
             .toPromise();            
     }
 
-    addUser(user: IUser): Promise<IUser> {
-        delete user._id; // remove eventual _id            
-        return this.http.post(this.USER_SERVICE_URL, JSON.stringify(user), this.HTTP_OPTIONS())
-            .map( resp => resp.json() )
-            .toPromise();
+    addUser(username: string, password:string, password_confirm:string, email:string): Promise<string> {
+        let user = {
+            username:username,
+            password:password,
+            password_confirm: password_confirm,
+            email:email
+        };
+
+        return this.http.post(this.USER_SERVICE_URL, JSON.stringify(user), this.HTTP_OPTIONS())                
+            .map( resp => {
+                console.debug(JSON.stringify(resp.headers));
+                var location = resp.headers.get('Location');
+                return location.substring(location.lastIndexOf('/')+1);                          
+            }).toPromise();            
         
     }
 
@@ -90,8 +101,7 @@ export class UserService implements UserServiceBase {
         body.password = password;
         body.password_confirm = password_confirm;
         
-        return this.http.patch(this.USER_SERVICE_URL + '/current/changepassword', body, this.HTTP_OPTIONS())
-            .map(res => res.json())
+        return this.http.patch(this.USER_SERVICE_URL + '/current/changepassword', body, this.HTTP_OPTIONS())            
             .toPromise();
 
     }
@@ -104,14 +114,18 @@ export class UserService implements UserServiceBase {
         body.password = password;
         body.password_confirm = password_confirm;
         
-        return this.http.patch(this.USER_SERVICE_URL + '/user/' + id + '/resetpassword', body, this.HTTP_OPTIONS())
-            .map(res => res.json())
+        return this.http.patch(this.USER_SERVICE_URL + '/user/' + id + '/resetpassword', body, this.HTTP_OPTIONS())            
             .toPromise();
     }
 
     getCurrentUser():Promise<IUser>{
         return this.http.get(this.USER_SERVICE_URL + '/current', this.HTTP_OPTIONS())
             .map(res => res.json())
+            .toPromise();
+    }
+
+    delete(id:string):Promise<IUser>{
+        return this.http.delete(this.USER_SERVICE_URL + '/user/' + id, this.HTTP_OPTIONS())
             .toPromise();
     }
 }

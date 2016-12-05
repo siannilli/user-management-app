@@ -61,8 +61,17 @@ export class InMemoryUserService implements UserServiceBase {
         return Promise.resolve(user); 
     }
 
-    addUser(user: IUser): Promise<IUser> {
+    addUser(username: string, password:string, password_confirm:string, email:string): Promise<string> {
 
+        let user:IUser = {
+            _id: undefined,
+            username: username,
+            password: password,
+            email: email,
+            roles:[],
+            applications: []
+        };
+        
         // dev mode
         let idx:number = this.USER_LIST.findIndex(search => search.username === user.username);
 
@@ -106,6 +115,10 @@ export class InMemoryUserService implements UserServiceBase {
 
         user.password = password;        
  
+    }
+
+    delete(id:string){
+        return Promise.reject({message: 'Not implemented'});
     }
 
     private currentUser():IUser{

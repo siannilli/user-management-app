@@ -15,7 +15,8 @@ interface IUserService {
     changePassword(oldpassword:string, password:string, confirm_password:string):Promise<void>;
     resetPassword(id:string, password:string, confirm_password:string):Promise<void>;
     updateUser(id:string, user: IUser): Promise<IUser>;
-    addUser(user: IUser): Promise<IUser>;
+    addUser(username: string, password:string, password_confirm:string, email:string): Promise<string>;
+    delete(id:string):Promise<void>;
 }
 
 // Abstract class required to accept injected service by Angular injection 
@@ -52,7 +53,10 @@ export abstract class UserServiceBase implements IUserService {
         return null; 
     }
 
-    addUser(user: IUser): Promise<IUser> {
+    addUser(username:string, password:string, password_confirm:string, email:string): Promise<string> {
         return null;        
+    }
+    delete(id:string):Promise<string>{
+        return null;
     }
 }

@@ -2,11 +2,11 @@ import { Inject, Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { Subscription,   } from 'rxjs';
 import { IUser } from '../shared/IUser';
-import { IJWTService } from '../IServices/IJWTService';
+import { JWTServiceBase } from '../IServices/IJWTService';
 import { UserServiceBase, USER_SERVICE_TOKEN } from '../IServices/IUserService';
 
 @Injectable()
-export class InMemoryJwtService implements IJWTService {
+export class InMemoryJwtService implements JWTServiceBase {
 
   private TOKEN_NAME:string = 'authentication_token';
 

@@ -9,6 +9,7 @@ import { JWTServiceBase, JWT_SERVICE_TOKEN } from './IServices/IJWTService';
 import { environment } from '.';
 import { MenuService } from './Services/MenuService';
 import { Subscription } from 'rxjs/Subscription';
+import { IUser } from './shared/IUser';
 @Component({
   selector: 'admin-app',
   templateUrl: 'admin.component.html',
@@ -16,11 +17,12 @@ import { Subscription } from 'rxjs/Subscription';
 })
 
 export class AdminAppComponent implements OnInit, OnDestroy {
-
+  currentUser:IUser = null;  
   title = 'User management application';
   subscriptions: Subscription;
 
-  constructor( @Inject(JWT_SERVICE_TOKEN) private jwtService: JWTServiceBase,
+  constructor( 
+    @Inject(JWT_SERVICE_TOKEN) private jwtService: JWTServiceBase,
     private menuService: MenuService,
     private router: Router) {
 

@@ -1,12 +1,17 @@
 <md-sidenav-layout fullscreen>
-    <md-sidenav #menu align="start" mode="over">
-        <md-card>
-            <md-card-title>title</md-card-title>
-            <md-card-content>content</md-card-content>
+    <md-sidenav #menu align="start" mode="over" [(opened)]="menuOpen" (open)="menuOpen=true" (close)="menuOpen=false">
+        <md-card *ngIf="currentUser">
+            <md-card-title>{{currentUser.username}}</md-card-title>
+            <md-card-content>{{currentUser.email}}</md-card-content>
         </md-card>
 
         <!-- Menu items-->
         <md-nav-list>
+
+            <md-list-item>
+                <button md-button (click)="changePassword()"><md-icon> security </md-icon><span>Change password</span></button>
+            </md-list-item>
+
             <md-list-item>
                 <button md-button (click)="logout()"><md-icon>exit_to_app</md-icon><span>Log out</span></button>
             </md-list-item>
@@ -15,10 +20,10 @@
     </md-sidenav>
 
     <md-toolbar color="primary">
-        <button md-icon-button (click)="menu.toggle()"><md-icon>menu</md-icon></button>
+        <button md-icon-button (click)="menuOpen = !menuOpen"><md-icon>menu</md-icon></button>
         <span>{{title}}</span>
         <span class="fill-space"></span>
-        <button md-icon-button>
+        <button md-icon-button (click)="addUser()">
             <md-icon> add </md-icon>
         </button>
         <button md-icon-button>

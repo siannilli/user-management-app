@@ -11,8 +11,8 @@ import { UserComponent } from './+user/user.component';
 import { UsersComponent } from './+users/users.component';
 import { LoginComponent } from './+login/login.component';
 
-import { JWT_SERVICE_TOKEN, JWT_SERVICE_URL_TOKEN, IJWTService } from './IServices/IJWTService';
-import { USER_SERVICE_TOKEN, USER_SERVICE_URL_TOKEN, IUserService } from './IServices/IUserService';
+import { JWT_SERVICE_TOKEN, JWT_SERVICE_URL_TOKEN } from './IServices/IJWTService';
+import { USER_SERVICE_TOKEN, USER_SERVICE_URL_TOKEN } from './IServices/IUserService';
 
 import { environment } from '.';
 import { UserService } from './Services/UserService';
@@ -22,6 +22,9 @@ import { InMemoryJwtService } from './Services/InMemoryJWTService';
 import { InMemoryUserService } from './Services/InMemoryUserService';
 
 import { MenuService } from './Services/MenuService';
+import { NewUserComponent } from './dialogs/new-user/new-user.component';
+import { ChangePasswordDialogComponent } from './dialogs/change-password-dialog/change-password-dialog.component';
+import { ResetPasswordDialogComponent } from './dialogs/reset-password-dialog/reset-password-dialog.component';
 
 // configure service providers according current environment
 let providers: any[] = []; // array of providers 
@@ -46,8 +49,9 @@ else{
 @NgModule({
   declarations: [
     AdminAppComponent,
-    UserComponent, UsersComponent, LoginComponent
+    UserComponent, UsersComponent, LoginComponent, NewUserComponent, ChangePasswordDialogComponent, ResetPasswordDialogComponent
   ],
+  entryComponents: [NewUserComponent, ChangePasswordDialogComponent, ResetPasswordDialogComponent],
   imports: [
     BrowserModule,
     FormsModule,

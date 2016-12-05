@@ -7,3 +7,19 @@ export interface IUser {
     applications: string[];
     roles: string[];
 }
+
+export interface INewUser{
+    username:string,
+    password:string,
+    password_confirm:string,
+    email:string
+}
+
+export interface IResetPassword {
+    password:string,
+    password_confirm:string,
+}
+
+export interface IChangePassword extends IResetPassword{
+    oldpassword:string
+}

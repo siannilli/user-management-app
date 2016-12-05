@@ -1,4 +1,9 @@
 <md-toolbar>
+
+    <button md-icon-button [routerLink]="['/users']">
+            <md-icon class="icon"> undo </md-icon>
+        </button>
+
     <span>{{user.username}}</span>
     <span class="fill-space"></span>
 
@@ -12,11 +17,6 @@
 
     <button md-icon-button (click)="delete()">
             <md-icon class="icon"> delete </md-icon>
-        </button>
-
-
-    <button md-icon-button [routerLink]="['/users']">
-            <md-icon class="icon"> undo </md-icon>
         </button>
 
 </md-toolbar>

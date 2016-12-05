@@ -100,7 +100,9 @@ export class UserComponent implements OnInit {
     }
 
     delete(){
-        alert('Not implemented!');
+        this.userService.delete(this.user._id)
+            .then(() => this.router.navigate(['/users']))
+            .catch(error => this.apiErrorText = error._body || error);                
     }
 
     update() {
