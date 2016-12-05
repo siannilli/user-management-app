@@ -1,9 +1,11 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, Output, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { IUser } from '../shared/IUser';
 import { UserServiceBase, USER_SERVICE_TOKEN } from '../IServices/IUserService';
 import { JWTServiceBase, JWT_SERVICE_TOKEN } from '../IServices/IJWTService';
 import { Observable } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
+import { MenuService } from '../Services/MenuService';
 
 
 @Component({
@@ -14,12 +16,24 @@ import { Observable } from 'rxjs';
 })
 
 export class UsersComponent implements OnInit {
-
+    
+    title:string = "List of users"
     users: IUser[];
     apiErrorText: string;
     self = this;
 
-    constructor(@Inject(USER_SERVICE_TOKEN) private userService: UserServiceBase, @Inject(JWT_SERVICE_TOKEN) private jwtService: JWTServiceBase, private router: Router) { }
+    constructor(
+        @Inject(USER_SERVICE_TOKEN) private userService: UserServiceBase, 
+        @Inject(JWT_SERVICE_TOKEN) private jwtService: JWTServiceBase,
+        private menu:MenuService, 
+        private router: Router) {
+            
+
+        }
+
+    logout(){
+        this.menu.logout();
+    }
 
     onSelect(user: IUser) {
         console.log(user.username);

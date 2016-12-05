@@ -21,8 +21,12 @@ import { JwtService } from './Services/JwtService';
 import { InMemoryJwtService } from './Services/InMemoryJWTService';
 import { InMemoryUserService } from './Services/InMemoryUserService';
 
+import { MenuService } from './Services/MenuService';
+
 // configure service providers according current environment
 let providers: any[] = []; // array of providers 
+
+providers.push(MenuService);
 
 if (!environment.offline){
       providers.push({ provide: JWT_SERVICE_TOKEN , useClass : JwtService });

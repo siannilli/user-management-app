@@ -6,10 +6,19 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import { JWT_SERVICE_TOKEN, JWTServiceBase } from '../IServices/IJWTService';
 import { IResultsetView } from '../shared/IResultsetView';
-import { IUserService, USER_SERVICE_URL_TOKEN } from '../IServices/IUserService';
+import { UserServiceBase, USER_SERVICE_URL_TOKEN } from '../IServices/IUserService';
+
+class ResetPasswordCommand{
+    password:string;
+    password_confirm:string;
+}
+
+class ChangePasswordCommand extends ResetPasswordCommand{
+    oldpassword:string;
+}
 
 @Injectable()
-export class UserService implements IUserService {
+export class UserService implements UserServiceBase {
 
     constructor(
         private http: Http, 
@@ -70,5 +79,39 @@ export class UserService implements IUserService {
             .map( resp => resp.json() )
             .toPromise();
         
+    }
+
+    changePassword(oldpassword:string, password:string, password_confirm:string):Promise<void>{
+        if (!(password === password_confirm))
+            return Promise.reject({message: 'Password and password confirm do not match'});
+
+        let body:ChangePasswordCommand = new ChangePasswordCommand();
+        body.oldpassword = oldpassword;
+        body.password = password;
+        body.password_confirm = password_confirm;
+        
+        return this.http.patch(this.USER_SERVICE_URL + '/current/changepassword', body, this.HTTP_OPTIONS())
+            .map(res => res.json())
+            .toPromise();
+
+    }
+
+    resetPassword(id:string, password:string, password_confirm:string):Promise<void>{
+        if (!(password === password_confirm))
+            return Promise.reject({message: 'Password and password confirm do not match'});
+
+        let body:ResetPasswordCommand = new ResetPasswordCommand();
+        body.password = password;
+        body.password_confirm = password_confirm;
+        
+        return this.http.patch(this.USER_SERVICE_URL + '/user/' + id + '/resetpassword', body, this.HTTP_OPTIONS())
+            .map(res => res.json())
+            .toPromise();
+    }
+
+    getCurrentUser():Promise<IUser>{
+        return this.http.get(this.USER_SERVICE_URL + '/current', this.HTTP_OPTIONS())
+            .map(res => res.json())
+            .toPromise();
     }
 }

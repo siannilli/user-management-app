@@ -1,11 +1,42 @@
-<span *ngIf="apiErrorText">{{apiErrorText}}</span>
+<md-sidenav-layout fullscreen>
+    <md-sidenav #menu align="start" mode="over">
+        <md-card>
+            <md-card-title>title</md-card-title>
+            <md-card-content>content</md-card-content>
+        </md-card>
 
-<md-nav-list>
-    <h3 md-subheader>Active users</h3>
-    <a md-list-item *ngFor="let user of users" (click)="onSelect(user)">
-        <md-icon md-list-avatar>face</md-icon>
-        <h4 md-line>{{user.username}}</h4>
-        <p md-line class="user_email"> {{user.email}} </p>
-    </a>
-    <md-divider></md-divider>
-</md-nav-list>
+        <!-- Menu items-->
+        <md-nav-list>
+            <md-list-item>
+                <button md-button (click)="logout()"><md-icon>exit_to_app</md-icon><span>Log out</span></button>
+            </md-list-item>
+        </md-nav-list>
+
+    </md-sidenav>
+
+    <md-toolbar color="primary">
+        <button md-icon-button (click)="menu.toggle()"><md-icon>menu</md-icon></button>
+        <span>{{title}}</span>
+        <span class="fill-space"></span>
+        <button md-icon-button>
+            <md-icon> add </md-icon>
+        </button>
+        <button md-icon-button>
+            <md-icon class="icon">search</md-icon>
+        </button>
+    </md-toolbar>
+
+    <span *ngIf="apiErrorText">{{apiErrorText}}</span>
+
+    <div id="container">
+        <md-nav-list>
+            <h3 md-subheader>Active users</h3>
+            <a md-list-item *ngFor="let user of users" (click)="onSelect(user)">
+                <md-icon md-list-avatar>face</md-icon>
+                <h4 md-line>{{user.username}}</h4>
+                <p md-line class="user_email"> {{user.email}} </p>
+            </a>
+            <md-divider></md-divider>
+        </md-nav-list>
+    </div>
+</md-sidenav-layout>

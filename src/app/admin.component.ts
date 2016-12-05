@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, enableProdMode } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, OnDestroy } from '@angular/core';
 
 import { LoginComponent } from './+login';
 import { Router, RouterModule } from '@angular/router';
@@ -7,17 +7,27 @@ import { UsersComponent } from './+users';
 import { UserComponent } from './+user';
 import { JWTServiceBase, JWT_SERVICE_TOKEN } from './IServices/IJWTService';
 import { environment } from '.';
-
+import { MenuService } from './Services/MenuService';
+import { Subscription } from 'rxjs/Subscription';
 @Component({
   selector: 'admin-app',
   templateUrl: 'admin.component.html',
   styleUrls: ['admin.component.css'],
 })
 
-export class AdminAppComponent implements OnInit {
-  title = 'User management application';
+export class AdminAppComponent implements OnInit, OnDestroy {
 
-  constructor( @Inject(JWT_SERVICE_TOKEN) private jwtService: JWTServiceBase, private router: Router) {
+  title = 'User management application';
+  subscriptions: Subscription;
+
+  constructor( @Inject(JWT_SERVICE_TOKEN) private jwtService: JWTServiceBase,
+    private menuService: MenuService,
+    private router: Router) {
+
+    this.subscriptions = this.menuService.menuActions$.subscribe((action) => {
+      if (action === "logout")
+        this.logout();
+    });
 
     if (!environment.production)
       this.title = this.title.concat(' (development mode)');
@@ -36,5 +46,9 @@ export class AdminAppComponent implements OnInit {
       this.router.navigate(['/login']);
     }
 
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 }

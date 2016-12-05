@@ -5,12 +5,15 @@ import { IResultsetView } from '../shared/IResultsetView';
 export let USER_SERVICE_TOKEN = new OpaqueToken('user.service');
 export let USER_SERVICE_URL_TOKEN = new OpaqueToken('user.service.url');
 
-export interface IUserService {
+interface IUserService {
 
     getAllUsers (skip?: number, limit?: number): Promise<IResultsetView<IUser>>;
     getUser(id: string): Promise<IUser>;
     getAvailableRoles(): Promise<string[]>;
     getAvailableApplications(): Promise<string[]>;
+    getCurrentUser():Promise<IUser>;
+    changePassword(oldpassword:string, password:string, confirm_password:string):Promise<void>;
+    resetPassword(id:string, password:string, confirm_password:string):Promise<void>;
     updateUser(id:string, user: IUser): Promise<IUser>;
     addUser(user: IUser): Promise<IUser>;
 }
@@ -18,6 +21,17 @@ export interface IUserService {
 // Abstract class required to accept injected service by Angular injection 
 export abstract class UserServiceBase implements IUserService {    
 
+    resetPassword(id:string, password:string, confirm_password:string):Promise<void> {
+        return null;
+    }
+
+    changePassword(oldpassword:string, password:string, confirm_password:string): Promise<void>{
+        return null;
+    }
+
+    getCurrentUser():Promise<IUser>{
+        return null;
+    }
     getAllUsers (skip?: number, limit: number = 10): Promise<IResultsetView<IUser>> {
         return null
     }

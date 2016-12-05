@@ -1,6 +1,29 @@
+<md-toolbar>
+    <span>{{user.username}}</span>
+    <span class="fill-space"></span>
+
+    <button md-icon-button>
+        <md-icon class="icon" (click)="changePassword()"> securty </md-icon>
+    </button>
+
+    <button md-icon-button (click)="update()">
+            <md-icon> save </md-icon>
+        </button>
+
+    <button md-icon-button (click)="delete()">
+            <md-icon class="icon"> delete </md-icon>
+        </button>
+
+
+    <button md-icon-button [routerLink]="['/users']">
+            <md-icon class="icon"> undo </md-icon>
+        </button>
+
+</md-toolbar>
+
+
 <form #userForm="ngForm">
     <md-card>
-        <md-card-title>{{user.username}}</md-card-title>
         <md-card-subtitle class="error" *ngIf="error">{{error}}</md-card-subtitle>
         <md-card-content>
             <p>
@@ -24,18 +47,12 @@
                     <span><button md-button color="primary" (click)="enableAllRoles()">All</button>&nbsp;&nbsp;<button md-button color="primary" (click)="user.roles = []">None</button></span>
                     <md-list>
                         <md-list-item *ngFor="let role of availableRoles">
-                            <md-checkbox [checked]="isInRole(role)" (change)="toggleRole(role)" name="role" >{{role}}</md-checkbox>
+                            <md-checkbox [checked]="isInRole(role)" (change)="toggleRole(role)" name="role">{{role}}</md-checkbox>
                         </md-list-item>
                     </md-list>
                     <h4 *ngIf="debugMode">Debug: {{user.roles | json }}</h4>
                 </div>
             </div>
-            <md-divider></md-divider>
-            <md-card-actions align="middle">
-                <button md-raised-button type="button" (click)="update()" >Submit</button>&nbsp;or&nbsp;
-                <a [routerLink]="['/users']">Cancel</a>
-            </md-card-actions>
-            <md-divider></md-divider>
         </md-card-content>
     </md-card>
 </form>

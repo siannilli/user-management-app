@@ -5,11 +5,11 @@ import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 
-import { IUserService } from '../IServices/IUserService';
+import { UserServiceBase } from '../IServices/IUserService';
 import { IResultsetView } from '../shared/IResultsetView';
 
 @Injectable()
-export class InMemoryUserService implements IUserService {
+export class InMemoryUserService implements UserServiceBase {
 
     USER_LIST:IUser[] = require('./userDatabase.json');
     DEV_APPLICATIONS:string[] = ["User admin", "Spot"];
@@ -74,6 +74,42 @@ export class InMemoryUserService implements IUserService {
         this.USER_LIST.push(user);
         return Promise.resolve(user);
         
+    }
+
+    getCurrentUser(): Promise<IUser>{
+        return Promise.resolve(this.currentUser()); // return first item on list, should lookup according jwt service token
+    }
+
+    resetPassword(id:string, password:string, password_confirm:string): Promise<void>{
+        
+        if (!(password === password_confirm))
+            return Promise.reject({ message: 'Password and password confirm do not match'});
+
+        let userIdx = this.USER_LIST.findIndex(user => user._id === id);
+        if (userIdx <0 )
+            return Promise.reject({message: 'User not found'}); 
+        
+        this.USER_LIST[userIdx].password = password;
+        return Promise.resolve();
+    }
+
+    changePassword(oldpassword:string, password:string, password_confirm:string):Promise<void>
+    {
+        
+        if (!(password === password_confirm))
+            return Promise.reject({ message: 'Password and password confirm do not match'});
+
+        let user = this.currentUser();
+
+        if (!(user.password === oldpassword))
+            return Promise.reject({message: 'Old password does not match'});
+
+        user.password = password;        
+ 
+    }
+
+    private currentUser():IUser{
+        return this.USER_LIST[0];
     }
 
 }

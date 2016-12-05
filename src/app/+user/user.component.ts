@@ -99,6 +99,10 @@ export class UserComponent implements OnInit {
 
     }
 
+    delete(){
+        alert('Not implemented!');
+    }
+
     update() {
         console.debug('Updating user...' + this.user);
         this.userService.updateUser(this.userId, this.user)
