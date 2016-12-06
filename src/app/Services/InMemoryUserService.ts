@@ -63,6 +63,9 @@ export class InMemoryUserService implements UserServiceBase {
 
     addUser(username: string, password:string, password_confirm:string, email:string): Promise<string> {
 
+        if (!(password === password_confirm))
+            return Promise.reject({ message: 'Password and password confirm do not match'});
+
         let user:IUser = {
             _id: undefined,
             username: username,
@@ -81,7 +84,7 @@ export class InMemoryUserService implements UserServiceBase {
         user._id = user.username;
 
         this.USER_LIST.push(user);
-        return Promise.resolve(user);
+        return Promise.resolve(user._id);
         
     }
 
@@ -114,11 +117,17 @@ export class InMemoryUserService implements UserServiceBase {
             return Promise.reject({message: 'Old password does not match'});
 
         user.password = password;        
- 
+        return Promise.resolve();
     }
 
-    delete(id:string){
-        return Promise.reject({message: 'Not implemented'});
+    delete(id:string):Promise<void>{
+
+        let idx:number = this.USER_LIST.findIndex(user => user._id === id);
+        if (idx < 0)
+            return Promise.reject({message: 'User not found'});
+        
+        this.USER_LIST.splice(idx, 1);
+        return Promise.resolve();
     }
 
     private currentUser():IUser{

@@ -1,13 +1,15 @@
-<md-card>
-  <md-card-title>New user</md-card-title>
-  <md-card-content>
-    <md-input placeholder="username" [(ngModel)]="result.username" aria-required></md-input>
-    <md-input placeholder="password" [(ngModel)]="result.password" type="password" aria-required></md-input>
-    <md-input placeholder="confirm password" [(ngModel)]="result.password_confirm" type="password" aria-required></md-input>
-    <md-input placeholder="Email" [(ngModel)]="result.email" type="email" aria-required></md-input>    
-  </md-card-content>
-  <md-card-actions>
-    <button md-button (click)="dialogRef.close(result)">Ok</button>
-    <button md-button (click)="dialogRef.close(null)">Cancel</button>  
-  </md-card-actions>
-</md-card>
+<form #dialogResult="ngForm">
+  <md-card>
+    <md-card-title>New user</md-card-title>
+    <md-card-content>
+      <md-input name="username" placeholder="Username" ngModel required></md-input>
+      <md-input name="password" placeholder="Password" ngModel required #password type="password" required></md-input>
+      <md-input name="password_confirm" placeholder="Confirm password" ngModel #password_confirm type="password" required sameValueAs="password"></md-input>
+      <md-input name="email" placeholder="Email" ngModel type="email"></md-input>
+    </md-card-content>
+    <md-card-actions>
+      <button md-button [disabled]="!dialogResult.valid" (click)="dialogRef.close(dialogResult.value)">Ok</button>
+      <button md-button (click)="dialogRef.close(null)">Cancel</button>
+    </md-card-actions>
+  </md-card>
+</form>

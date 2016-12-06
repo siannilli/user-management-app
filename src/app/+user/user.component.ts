@@ -1,5 +1,7 @@
 import { Inject, Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
+import { MdDialog, MdDialogRef } from '@angular/material/dialog';
+import { ResetPasswordDialogComponent } from '../dialogs/reset-password-dialog/reset-password-dialog.component';
 import { Location } from '@angular/common';
 import { IUser } from '../shared/IUser';
 import { User } from '../shared/User';
@@ -26,7 +28,7 @@ export class UserComponent implements OnInit {
     availableRoles: string[] = [];
     availableApps: string[] = [];
 
-    apiErrorText: string;
+    error: string;
 
     debugMode:boolean = environment.debugMode;
 
@@ -35,6 +37,7 @@ export class UserComponent implements OnInit {
         private location: Location,
         @Inject(USER_SERVICE_TOKEN) private userService: UserServiceBase,
         @Inject(JWT_SERVICE_TOKEN) private jwtService: JWTServiceBase,
+        private dialog:MdDialog,
         private router: Router
     ) { }
 
@@ -44,7 +47,7 @@ export class UserComponent implements OnInit {
             this.router.navigate(['/login']);
 
         this.userId = this.activeRoute.snapshot.params['name'];
-        this.apiErrorText = '';
+        this.error = '';
 
         let self = this;
 
@@ -52,15 +55,15 @@ export class UserComponent implements OnInit {
             .then(user => {
                 self.user = user;
                 console.log(`User ${this.userId} loaded`);
-            }, error => self.apiErrorText = error._body);
+            }, error => self.error = error._body);
 
         this.userService.getAvailableApplications()
             .then(value => self.availableApps = value,
-            error => this.apiErrorText += `\n${error._body}`);
+            error => this.error += `\n${error._body}`);
 
         this.userService.getAvailableRoles()
             .then(value => self.availableRoles = value,
-            error => this.apiErrorText += `\n${error._body}`);
+            error => this.error += `\n${error._body}`);
     }
 
     enableAllApplications() {
@@ -102,7 +105,7 @@ export class UserComponent implements OnInit {
     delete(){
         this.userService.delete(this.user._id)
             .then(() => this.router.navigate(['/users']))
-            .catch(error => this.apiErrorText = error._body || error);                
+            .catch(error => this.error = error._body || error);                
     }
 
     update() {
@@ -114,5 +117,18 @@ export class UserComponent implements OnInit {
             })
             .catch(err => console.error(err));
 
+    }
+
+    changePassword(){
+        let resetPassword:MdDialogRef<ResetPasswordDialogComponent> = this.dialog.open(ResetPasswordDialogComponent);
+        resetPassword.afterClosed().subscribe((result) => 
+        {
+            if (result != null){
+                this.userService.resetPassword(this.userId, result.password, result.password_confirm)
+                    .then(()=> this.error = undefined)
+                    .catch((error) => this.error = error.message || error._body || error);
+            }
+            resetPassword = null;
+        });
     }
 }

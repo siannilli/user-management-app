@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MdDialog, MdDialogRef } from '@angular/material/dialog';
 
+
 @Component({
   selector: 'app-reset-password-dialog',
   templateUrl: './reset-password-dialog.component.html',

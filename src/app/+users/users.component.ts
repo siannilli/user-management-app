@@ -48,7 +48,7 @@ export class UsersComponent implements OnInit {
                             console.debug(user);
                             this.router.navigate(['/user', user]); 
                         })
-                        .catch(err => this.apiErrorText = err._body || err);
+                        .catch(err => this.apiErrorText = err.message || err._body || err);
                 }
                 newUserDialog = null;
         } );
@@ -101,7 +101,7 @@ export class UsersComponent implements OnInit {
                 console.debug(`Found ${users.found} users`);
                 this.users = users.view;
             })
-            .catch(error => this.apiErrorText = error._body || error);
+            .catch(error => this.apiErrorText = error.message || error._body || error);
             
     }
 

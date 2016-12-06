@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, OpaqueToken, enableProdMode } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
 
@@ -26,6 +26,8 @@ import { NewUserComponent } from './dialogs/new-user/new-user.component';
 import { ChangePasswordDialogComponent } from './dialogs/change-password-dialog/change-password-dialog.component';
 import { ResetPasswordDialogComponent } from './dialogs/reset-password-dialog/reset-password-dialog.component';
 
+import { SharedModule } from './shared/shared.module';
+
 // configure service providers according current environment
 let providers: any[] = []; // array of providers 
 
@@ -47,7 +49,7 @@ else{
 
 
 @NgModule({
-  declarations: [
+  declarations: [    
     AdminAppComponent,
     UserComponent, UsersComponent, LoginComponent, NewUserComponent, ChangePasswordDialogComponent, ResetPasswordDialogComponent
   ],
@@ -55,15 +57,17 @@ else{
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
-    MaterialModule.forRoot(),
+    MaterialModule.forRoot(),    
+    SharedModule,
     RouterModule.forRoot([
       {path: 'login', component: LoginComponent},
       {path: 'users', component: UsersComponent},
       {path: 'user/:name', component: UserComponent},
       {path: '', component: UsersComponent}
     ])
-  ],
+  ],  
   providers: providers,
   bootstrap: [AdminAppComponent]
 })
