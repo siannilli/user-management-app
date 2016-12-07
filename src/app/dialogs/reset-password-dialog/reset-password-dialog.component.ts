@@ -9,10 +9,6 @@ import { MdDialog, MdDialogRef } from '@angular/material/dialog';
 })
 export class ResetPasswordDialogComponent implements OnInit {
 
-  result = {
-    password : undefined,
-    password_confirm : undefined
-  }
   constructor(private dialogRef:MdDialogRef<ResetPasswordDialogComponent>) { }
 
   ngOnInit() {

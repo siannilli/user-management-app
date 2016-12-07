@@ -1,14 +1,14 @@
 <md-toolbar>
 
     <button md-icon-button [routerLink]="['/users']">
-            <md-icon class="icon"> undo </md-icon>
+            <md-icon class="icon"> close </md-icon>
         </button>
 
     <span>{{user.username}}</span>
     <span class="fill-space"></span>
 
     <button md-icon-button (click)="changePassword()">
-        <md-icon class="icon"> security </md-icon>
+        <md-icon class="icon"> key </md-icon>
     </button>
 
     <button md-icon-button (click)="update()">

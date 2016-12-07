@@ -1,14 +1,23 @@
-<form #dialogResult="ngForm">
+<form #dialogResult="ngForm" (ngSubmit)="dialogRef.close(dialogResult.value)">
   <md-card>
     <md-card-title>New user</md-card-title>
     <md-card-content>
-      <md-input name="username" placeholder="Username" ngModel required></md-input>
-      <md-input name="password" placeholder="Password" ngModel required #password type="password" required></md-input>
-      <md-input name="password_confirm" placeholder="Confirm password" ngModel #password_confirm type="password" required sameValueAs="password"></md-input>
-      <md-input name="email" placeholder="Email" ngModel type="email"></md-input>
+      <md-input name="username" placeholder="Username" #username="ngModel" ngModel required>
+        <md-hint *ngIf="!username.pristine && username.errors" [ngStyle]="{'color': 'red'}" align="start">Missing value</md-hint>
+      </md-input>
+      <md-input name="password" placeholder="Password" ngModel required #password="ngModel" type="password" required>
+        <md-hint *ngIf="!password.pristine && password.errors" [ngStyle]="{'color': 'red'}" align="start">Missing value</md-hint>
+      </md-input>
+      <md-input name="password_confirm" placeholder="Confirm password" ngModel #password_confirm="ngModel" type="password" required sameValueAs="password">
+        <md-hint *ngIf="!password_confirm.pristine && password_confirm.errors && password_confirm.hasError('required')" [ngStyle]="{'color': 'red'}" align="start">Missing value</md-hint>
+        <md-hint *ngIf="!password_confirm.pristine && password_confirm.errors && !password_confirm.hasError('required') && password_confirm.hasError('sameValueAs')" [ngStyle]="{'color': 'red'}" align="start">Password does not match</md-hint>
+      </md-input>
+      <md-input name="email" placeholder="Email" ngModel type="email" #email="ngModel" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$">
+        <md-hint *ngIf="!email.pristine && email.errors && email.hasError('pattern')" [ngStyle]="{'color': 'red'}" align="start">Email has the wrong format</md-hint>
+      </md-input>
     </md-card-content>
     <md-card-actions>
-      <button md-button [disabled]="!dialogResult.valid" (click)="dialogRef.close(dialogResult.value)">Ok</button>
+      <button md-button [disabled]="!dialogResult.valid" >Ok</button>
       <button md-button (click)="dialogRef.close(null)">Cancel</button>
     </md-card-actions>
   </md-card>
