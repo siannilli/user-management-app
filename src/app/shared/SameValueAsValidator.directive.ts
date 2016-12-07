@@ -1,5 +1,5 @@
 import { Directive, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { FormControl, AbstractControl, ValidatorFn, Validators, NG_VALIDATORS, Validator } from '@angular/forms';
+import { AbstractControl, ValidatorFn, Validators, NG_VALIDATORS, Validator } from '@angular/forms';
 
 
 @Directive({
@@ -10,7 +10,7 @@ import { FormControl, AbstractControl, ValidatorFn, Validators, NG_VALIDATORS, V
 export class SameValueValidatorDirective implements Validator {
     @Input('sameValueAs') comparingControlName: string;
 
-    validate(control:AbstractControl): {[key:string]: any}{
+    validate(control:AbstractControl): {[key:string]: any}{        
 
         let  compareControl:AbstractControl = control.root.get(this.comparingControlName);
         if (!compareControl)

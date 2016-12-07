@@ -25,6 +25,7 @@ import { MenuService } from './Services/MenuService';
 import { NewUserComponent } from './dialogs/new-user/new-user.component';
 import { ChangePasswordDialogComponent } from './dialogs/change-password-dialog/change-password-dialog.component';
 import { ResetPasswordDialogComponent } from './dialogs/reset-password-dialog/reset-password-dialog.component';
+import { NotificationsService } from './Services/notifications.service';
 
 import { SharedModule } from './shared/shared.module';
 
@@ -32,6 +33,7 @@ import { SharedModule } from './shared/shared.module';
 let providers: any[] = []; // array of providers 
 
 providers.push(MenuService);
+providers.push(NotificationsService);
 
 if (!environment.offline){
       providers.push({ provide: JWT_SERVICE_TOKEN , useClass : JwtService });

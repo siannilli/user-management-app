@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Output, OnDestroy } from '@angular/core';
+import { Component, OnInit, Inject, Output, OnDestroy, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { IUser } from '../shared/IUser';
 import { UserServiceBase, USER_SERVICE_TOKEN } from '../IServices/IUserService';
@@ -8,7 +8,8 @@ import { Subscription } from 'rxjs/Subscription';
 import { MenuService } from '../Services/MenuService';
 import { NewUserComponent } from '../dialogs/new-user/new-user.component';
 import { ChangePasswordDialogComponent } from '../dialogs/change-password-dialog/change-password-dialog.component';
-import { MdDialog, MdDialogRef } from '@angular/material/dialog';
+import { MdDialog, MdDialogRef, MdDialogConfig } from '@angular/material/dialog';
+import { NotificationsService } from '../Services/notifications.service';
 
 @Component({
     selector: 'app-users',
@@ -22,23 +23,27 @@ export class UsersComponent implements OnInit {
     currentUser :IUser = undefined;
     title:string = "List of users"
     users: IUser[];
-    apiErrorText: string;
     self = this;
+    dialogConfig:MdDialogConfig = new MdDialogConfig();        
 
     constructor(
         @Inject(USER_SERVICE_TOKEN) private userService: UserServiceBase, 
         @Inject(JWT_SERVICE_TOKEN) private jwtService: JWTServiceBase,
         private menu:MenuService, 
         private dialog:MdDialog,
+        private toaster:NotificationsService,
+        private vcr:ViewContainerRef,
         private router: Router) {
             
+        this.dialogConfig.role = 'dialog';
+        this.dialogConfig.viewContainerRef = this.vcr;
 
         }
 
+
     addUser(){        
-        
         let newUserDialog:MdDialogRef<NewUserComponent>
-             = this.dialog.open(NewUserComponent);
+             = this.dialog.open(NewUserComponent, this.dialogConfig);
 
         newUserDialog.afterClosed()
             .subscribe((result) =>{
@@ -48,7 +53,7 @@ export class UsersComponent implements OnInit {
                             console.debug(user);
                             this.router.navigate(['/user', user]); 
                         })
-                        .catch(err => this.apiErrorText = err.message || err._body || err);
+                        .catch(err => this.toaster.showToastError(err));
                 }
                 newUserDialog = null;
         } );
@@ -56,18 +61,17 @@ export class UsersComponent implements OnInit {
 
     changePassword(){
         this.menuOpen = false; // close the menu
-        this.apiErrorText = undefined;
 
         let changePasswordDialog:MdDialogRef<ChangePasswordDialogComponent> = 
-            this.dialog.open(ChangePasswordDialogComponent);
+            this.dialog.open(ChangePasswordDialogComponent, this.dialogConfig);
 
         changePasswordDialog.afterClosed()
                 .subscribe((result) => 
                 {
                     if (result != null){
                         this.userService.changePassword(result.oldpassword, result.password, result.password_confirm)
-                            .then(() => this.apiErrorText = 'Password has been changed')
-                            .catch((err)=> this.apiErrorText = err._body || err);                            
+                            .then(() => this.toaster.showToastInfo('Password has been changed'))
+                            .catch((err)=>  this.toaster.showToastError(err));                            
                     }
                     changePasswordDialog = null;
                 });
@@ -83,6 +87,9 @@ export class UsersComponent implements OnInit {
     }
 
     ngOnInit() {
+
+        this.toaster.ViewContainerRef = this.vcr;
+
         if (!this.jwtService.is_authenticated) // jwt token not exists, navigate to login view 
         {
             console.log('Not authenticated. Redirecting to login.');
@@ -93,15 +100,13 @@ export class UsersComponent implements OnInit {
             .then(user => this.currentUser = user)
             .catch(() => this.currentUser = undefined);
 
-        this.apiErrorText = undefined;
-
         console.debug('Loading list of users');
         this.userService.getAllUsers()
             .then(users => {
                 console.debug(`Found ${users.found} users`);
                 this.users = users.view;
             })
-            .catch(error => this.apiErrorText = error.message || error._body || error);
+            .catch(error => this.toaster.showToastError(error));
             
     }
 
