@@ -8,8 +8,8 @@ import { Subscription } from 'rxjs/Subscription';
 import { MenuService } from '../Services/MenuService';
 import { NewUserComponent } from '../dialogs/new-user/new-user.component';
 import { ChangePasswordDialogComponent } from '../dialogs/change-password-dialog/change-password-dialog.component';
-import { MdDialog, MdDialogRef, MdDialogConfig } from '@angular/material/dialog';
 import { NotificationsService } from '../Services/notifications.service';
+import { DialogManagerService } from '../Services/dialog-manager.service';
 
 @Component({
     selector: 'app-users',
@@ -24,56 +24,50 @@ export class UsersComponent implements OnInit {
     title:string = "List of users"
     users: IUser[];
     self = this;
-    dialogConfig:MdDialogConfig = new MdDialogConfig();        
 
     constructor(
         @Inject(USER_SERVICE_TOKEN) private userService: UserServiceBase, 
         @Inject(JWT_SERVICE_TOKEN) private jwtService: JWTServiceBase,
         private menu:MenuService, 
-        private dialog:MdDialog,
+        private dialog:DialogManagerService,
         private toaster:NotificationsService,
         private vcr:ViewContainerRef,
         private router: Router) {
             
-        this.dialogConfig.role = 'dialog';
-        this.dialogConfig.viewContainerRef = this.vcr;
 
         }
 
 
     addUser(){        
-        let newUserDialog:MdDialogRef<NewUserComponent>
-             = this.dialog.open(NewUserComponent, this.dialogConfig);
+        let newUserDialog:Promise<any>
+             = this.dialog.show(NewUserComponent);
 
-        newUserDialog.afterClosed()
-            .subscribe((result) =>{
-                if (result != null){
-                    this.userService.addUser(result.username, result.password, result.password_confirm, result.email)
-                        .then(user => {
-                            console.debug(user);
-                            this.router.navigate(['/user', user]); 
-                        })
-                        .catch(err => this.toaster.showToastError(err));
-                }
-                newUserDialog = null;
+        newUserDialog.then((result) =>{
+            if (result != null){
+                this.userService.addUser(result.username, result.password, result.password_confirm, result.email)
+                    .then(user => {
+                        console.debug(user);
+                        this.router.navigate(['/user', user]); 
+                    })
+                    .catch(err => this.toaster.showToastError(err));
+            }                
         } );
     }
 
     changePassword(){
         this.menuOpen = false; // close the menu
 
-        let changePasswordDialog:MdDialogRef<ChangePasswordDialogComponent> = 
-            this.dialog.open(ChangePasswordDialogComponent, this.dialogConfig);
+        let changePasswordDialog:Promise<any> = 
+            this.dialog.show(ChangePasswordDialogComponent);
 
-        changePasswordDialog.afterClosed()
-                .subscribe((result) => 
+        changePasswordDialog
+            .then((result) => 
                 {
                     if (result != null){
                         this.userService.changePassword(result.oldpassword, result.password, result.password_confirm)
                             .then(() => this.toaster.showToastInfo('Password has been changed'))
                             .catch((err)=>  this.toaster.showToastError(err));                            
-                    }
-                    changePasswordDialog = null;
+                    }                    
                 });
     }
 
@@ -88,6 +82,8 @@ export class UsersComponent implements OnInit {
 
     ngOnInit() {
 
+        // Set view container reference for services that need to create child dom elements
+        this.dialog.ViewContainerRef = this.vcr;
         this.toaster.ViewContainerRef = this.vcr;
 
         if (!this.jwtService.is_authenticated) // jwt token not exists, navigate to login view 

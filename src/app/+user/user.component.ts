@@ -1,6 +1,6 @@
 import { Inject, Component, OnInit, Input, ViewContainerRef } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { MdDialog, MdDialogRef, MdDialogConfig } from '@angular/material/dialog';
+import { DialogManagerService } from '../Services/dialog-manager.service';
 import { ResetPasswordDialogComponent } from '../dialogs/reset-password-dialog/reset-password-dialog.component';
 import { Location } from '@angular/common';
 import { IUser } from '../shared/IUser';
@@ -24,7 +24,6 @@ export class UserComponent implements OnInit {
 
     @Input()
     userId: string;
-    dialogConfig: MdDialogConfig = new MdDialogConfig();
 
     user: IUser = new User();
     availableRoles: string[] = [];
@@ -37,18 +36,18 @@ export class UserComponent implements OnInit {
         private location: Location,
         @Inject(USER_SERVICE_TOKEN) private userService: UserServiceBase,
         @Inject(JWT_SERVICE_TOKEN) private jwtService: JWTServiceBase,
-        private dialog: MdDialog,
+        private dialog: DialogManagerService,
         private toaster: NotificationsService,
         private router: Router,
         private vcr:ViewContainerRef
     ) {
-        this.dialogConfig.role = 'dialog';
-        this.dialogConfig.viewContainerRef = this.vcr;
 
     }
 
     ngOnInit() {
+
         this.toaster.ViewContainerRef = this.vcr;
+        this.dialog.ViewContainerRef = this.vcr;
 
         if (!this.jwtService.is_authenticated) // jwt token not exists, navigate to login view 
             this.router.navigate(['/login']);
@@ -128,14 +127,13 @@ export class UserComponent implements OnInit {
     }
 
     changePassword() {
-        let resetPassword: MdDialogRef<ResetPasswordDialogComponent> = this.dialog.open(ResetPasswordDialogComponent, this.dialogConfig);
-        resetPassword.afterClosed().subscribe((result) => {
-            if (result != null) {
-                this.userService.resetPassword(this.userId, result.password, result.password_confirm)
-                    .then(() => this.toaster.showToastInfo('Password changed'))
-                    .catch((error) => this.toaster.showToastError(error));
-            }
-            resetPassword = null;
-        });
+        this.dialog.show(ResetPasswordDialogComponent)
+            .then((result) => {
+                if (result != null) {
+                    this.userService.resetPassword(this.userId, result.password, result.password_confirm)
+                        .then(() => this.toaster.showToastInfo('Password changed'))
+                        .catch((error) => this.toaster.showToastError(error));
+                }
+            });
     }
 }
